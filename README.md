@@ -2,7 +2,7 @@
 pytorch based implementation of faster rcnn framework([Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks](https://arxiv.org/abs/1506.01497))
 
 ### Framework Structure  
-#### backbone:
+#### backbone
 This module includes backbone feature extraction network    
 * vgg16:vgg16 net network([Very Deep Convolutional Networks for Large-Scale Image Recognition](https://arxiv.org/abs/1409.1556))
 * fpn101:resnet101 fpn network([Deep Residual Learning for Image Recognition](https://arxiv.org/abs/1512.03385)) ([Feature Pyramid Networks for Object Detection](https://arxiv.org/abs/1612.03144))
