@@ -26,14 +26,14 @@ class coco(Dataset):
         self._COCO = COCO(self._json_path)
 
         with open(self._json_path) as anno_file:
-                self.anno = json.load(anno_file)
+            self.anno = json.load(anno_file)
 
     def __len__(self):
         return len(self.anno)
 
     def _get_ann_file(self):
-      prefix = 'instances' if self._image_set.find('test') == -1  else 'image_info'
-      return os.path.join(self._root_dir, 'annotations', prefix + '_' + self._image_set + self._year + '.json')
+        prefix = 'instances' if self._image_set.find('test') == -1 else 'image_info'
+        return os.path.join(self._root_dir, 'annotations', prefix + '_' + self._image_set + self._year + '.json')
 
     def _image_path_from_index(self, index):
         """
@@ -41,20 +41,21 @@ class coco(Dataset):
         """
         # Example image path for index=119993:
         #   images/train2014/COCO_train2014_000000119993.jpg
-        file_name = ( str(index).zfill(12) + '.jpg')
+        file_name = (str(index).zfill(12) + '.jpg')
         image_path = os.path.join(self._root_dir, self._data_name, file_name)
         assert os.path.exists(image_path), 'Path does not exist: {}'.format(image_path)
         return image_path
 
     def __getitem__(self, idx):
-        img_path = os.path.join(self._root_dir, self._data_name, self._image_path_from_index(idx))
+        a = self.anno['images'][idx]
+        image_idx = a['id']
+        img_path = os.path.join(self._root_dir, self._data_name, self._image_path_from_index(image_idx))
         image = Image.open(img_path)
 
-        im_ann = self._COCO.loadImgs(idx)[0]
-        width = im_ann['width']
-        height = im_ann['height']
+        width = a['width']
+        height = a['height']
 
-        annIds = self._COCO.getAnnIds(imgIds=idx, iscrowd=None)
+        annIds = self._COCO.getAnnIds(imgIds=image_idx, iscrowd=None)
         objs = self._COCO.loadAnns(annIds)
         # Sanitize bboxes -- some are invalid
         valid_objs = []
@@ -80,7 +81,7 @@ class coco(Dataset):
             iscrowd.append(int(obj["iscrowd"]))
 
         area = (boxes[:, 3] - boxes[:, 1]) * (boxes[:, 2] - boxes[:, 0])
-        image_id = torch.tensor([idx])
+        image_id = torch.tensor([image_idx])
 
         target = {}
         target["boxes"] = boxes
@@ -94,9 +95,13 @@ class coco(Dataset):
 
         return image, target
 
+    @staticmethod
+    def collate_fn(batch):
+        return tuple(zip(*batch))
+
 
 if __name__ == '__main__':
     a = coco("/data/jiapf/code/pytorch-cpn/data/COCO2017/",
-         "train",
-         '2017')
+             "train",
+             '2017')
     a.__getitem__(9)
