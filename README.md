@@ -14,6 +14,7 @@ pytorch based implementation of faster rcnn framework([Faster R-CNN: Towards Rea
 This module includes backbone feature extraction network    
 * vgg16:vgg16 net network([Very Deep Convolutional Networks for Large-Scale Image Recognition](https://arxiv.org/abs/1409.1556))
 * fpn101:resnet101 fpn network([Deep Residual Learning for Image Recognition](https://arxiv.org/abs/1512.03385)) ([Feature Pyramid Networks for Object Detection](https://arxiv.org/abs/1612.03144))
+* hrnet:high resolution net([Deep High-Resolution Representation Learning for Visual Recognition](https://arxiv.org/abs/1908.07919))
 * mobile_net:mobile_net v2 network([MobileNetV2: Inverted Residuals and Linear Bottlenecks](https://arxiv.org/abs/1801.04381))
 #### config
 This module includes config parameters in training period  and testing period
