@@ -99,9 +99,3 @@ class coco(Dataset):
     def collate_fn(batch):
         return tuple(zip(*batch))
 
-
-if __name__ == '__main__':
-    a = coco("/data/jiapf/code/pytorch-cpn/data/COCO2017/",
-             "train",
-             '2017')
-    a.__getitem__(9)

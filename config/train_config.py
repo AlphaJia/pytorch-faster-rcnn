@@ -1,4 +1,5 @@
 import sys
+import os
 
 
 def add_pypath(path):
@@ -7,10 +8,16 @@ def add_pypath(path):
 
 
 class Config:
-    backbone = 'mobilenet'  # [vgg16, resnet-fpn, mobilenet]
-    pretrained_weights = " " # [path or None]
+    # cur_dir = os.path.dirname(os.path.abspath(__file__))
+    # this_dir_name = cur_dir.split('/')[-1]
+    # root_dir = os.path.join(cur_dir, '..')
 
-    anchor_size = [64, 129, 256]
+    backbone = 'mobilenet'  # [vgg16, resnet-fpn, mobilenet]
+    pretrained_weights = None  # [path or None]
+
+    train_horizon_flip_prob = 0.5  # data horizon flip probility in train transform
+
+    anchor_size = [64, 128, 256]
     anchor_ratio = [0.5, 1, 2.0]
 
     device_name = 'cuda:0'
@@ -26,10 +33,10 @@ class Config:
     batch_size = 32
     weight_decay = 1e-5
 
-    num_class = 40 + 1 # foreground + 1 background
+    num_class = 40 + 1  # foreground + 1 background
     data_root_dir = " "
     model_save_dir = " "
 
 
 cfg = Config()
-add_pypath(cfg.root_dir)
+# add_pypath(cfg.root_dir)

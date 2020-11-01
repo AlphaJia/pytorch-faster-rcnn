@@ -1,5 +1,5 @@
-from torch import nn
 import torch
+from torch import nn
 
 
 def _make_divisible(ch, divisor=8, min_ch=None):
