@@ -43,29 +43,26 @@ class RPNHead(nn.Module):
 
 class RegionProposalNetwork(torch.nn.Module):
     """
-    Implements Region Proposal Network (RPN).
-
-    Arguments:
-        anchor_generator (AnchorGenerator): module that generates the anchors for a set of feature
-            maps.
-        head (nn.Module): module that computes the objectness and regression deltas
-        fg_iou_thresh (float): minimum IoU between the anchor and the GT box so that they can be
+     Implementation of Region Proposal Network (RPN).
+     :param anchor_generator: module that generates the anchors for feature map.
+     :param head: module that computes the objectness and regression deltas
+     :param fg_iou_thresh: minimum IoU between the anchor and the GT box so that they can be
             considered as positive during training of the RPN.
-        bg_iou_thresh (float): maximum IoU between the anchor and the GT box so that they can be
+     :param bg_iou_thresh: maximum IoU between the anchor and the GT box so that they can be
             considered as negative during training of the RPN.
-        batch_size_per_image (int): number of anchors that are sampled during training of the RPN
+     :param batch_size_per_image: number of anchors that are sampled during training of the RPN
             for computing the loss
-        positive_fraction (float): proportion of positive anchors in a mini-batch during training
+     :param positive_fraction: proportion of positive anchors in a mini-batch during training
             of the RPN
-        pre_nms_top_n (Dict[str]): number of proposals to keep before applying NMS. It should
+     :param pre_nms_top_n: number of proposals to keep before applying NMS. It should
             contain two fields: training and testing, to allow for different values depending
             on training or evaluation
-        post_nms_top_n (Dict[str]): number of proposals to keep after applying NMS. It should
+     :param post_nms_top_n: number of proposals to keep after applying NMS. It should
             contain two fields: training and testing, to allow for different values depending
             on training or evaluation
-        nms_thresh (float): NMS threshold used for postprocessing the RPN proposals
+     :param nms_thresh: NMS threshold used for postprocessing the RPN proposals
+     """
 
-    """
     __annotations__ = {
         'box_coder': BoxCoder,
         'proposal_matcher': Matcher,
@@ -78,13 +75,14 @@ class RegionProposalNetwork(torch.nn.Module):
                  fg_iou_thresh, bg_iou_thresh,
                  batch_size_per_image, positive_fraction,
                  pre_nms_top_n, post_nms_top_n, nms_thresh):
+
         super(RegionProposalNetwork, self).__init__()
         self.anchor_generator = anchor_generator
         self.head = head
         self.box_coder = BoxCoder(weights=(1.0, 1.0, 1.0, 1.0))
 
         # use during training
-        # 计算anchors与真实bbox的iou
+        # function for computing iou between anchor and true bbox
         self.box_similarity = box_op.box_iou
 
         self.proposal_matcher = Matcher(

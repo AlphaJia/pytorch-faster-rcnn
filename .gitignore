@@ -7,7 +7,6 @@ __pycache__/
 utils/faster_rcnn_utils.py
 utils/transform_utils.py
 utils/det_utils.py
-utils/rpn_utils.py
 utils/boxes_utils.py
 
 # C extensions

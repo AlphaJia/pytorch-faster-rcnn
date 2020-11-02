@@ -106,11 +106,6 @@ class FasterRCNNBase(nn.Module):
         else:
             return self.eager_outputs(losses, detections)
 
-        # if self.training:
-        #     return losses
-        #
-        # return detections
-
 
 class TwoMLPHead(nn.Module):
     """

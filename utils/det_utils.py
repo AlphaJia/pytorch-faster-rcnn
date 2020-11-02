@@ -11,7 +11,6 @@ class BalancedPositiveNegativeSampler(object):
     """
 
     def __init__(self, batch_size_per_image, positive_fraction):
-        # type: (int, float) -> None
         """
         Arguments:
             batch_size_per_image (int): number of elements to be selected per image
@@ -21,7 +20,6 @@ class BalancedPositiveNegativeSampler(object):
         self.positive_fraction = positive_fraction
 
     def __call__(self, matched_idxs):
-        # type: (List[Tensor]) -> Tuple[List[Tensor], List[Tensor]]
         """
         Arguments:
             matched idxs: list of tensors containing -1, 0 or positive values.
