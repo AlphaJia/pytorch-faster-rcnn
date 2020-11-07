@@ -65,7 +65,7 @@ class AnchorsGenerator(nn.Module):
 
     def num_anchors_per_location(self):
         # calculate the number of anchors per feature map, for k in origin paper
-        return [len(s) * len(a) for s, a in zip(self.sizes, self.aspect_ratios)]
+        return [len(self.sizes) * len(self.aspect_ratios)]
 
     def grid_anchors(self, feature_map_sizes, strides):
         """
