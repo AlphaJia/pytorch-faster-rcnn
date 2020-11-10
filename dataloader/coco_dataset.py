@@ -28,6 +28,19 @@ class coco(Dataset):
         with open(self._json_path) as anno_file:
             self.anno = json.load(anno_file)
 
+        cats = self._COCO.loadCats(self._COCO.getCatIds())
+        self._classes = tuple(['__background__'] + [c['name'] for c in cats])
+
+        self.classes = self._classes
+        self.num_classes = len(self.classes)
+        self._class_to_ind = dict(list(zip(self.classes, list(range(self.num_classes)))))
+        self._class_to_coco_cat_id = dict(list(zip([c['name'] for c in cats],
+                                                   self._COCO.getCatIds())))
+
+        self.coco_cat_id_to_class_ind = dict([(self._class_to_coco_cat_id[cls],
+                                          self._class_to_ind[cls])
+                                         for cls in self._classes[1:]])
+
     def __len__(self):
         return len(self.anno)
 
@@ -57,6 +70,7 @@ class coco(Dataset):
 
         annIds = self._COCO.getAnnIds(imgIds=image_idx, iscrowd=None)
         objs = self._COCO.loadAnns(annIds)
+
         # Sanitize bboxes -- some are invalid
         valid_objs = []
         for obj in objs:
@@ -70,25 +84,25 @@ class coco(Dataset):
         objs = valid_objs
         num_objs = len(objs)
 
-        boxes = np.zeros((num_objs, 4), dtype=np.uint16)
+        boxes = np.zeros((num_objs, 4), dtype=np.float32)
         gt_classes = np.zeros((num_objs), dtype=np.int32)
 
         iscrowd = []
         for ix, obj in enumerate(objs):
-            cls = obj['category_id']
+            cls = self.coco_cat_id_to_class_ind[obj['category_id']]
             boxes[ix, :] = obj['clean_bbox']
             gt_classes[ix] = cls
             iscrowd.append(int(obj["iscrowd"]))
 
-        area = (boxes[:, 3] - boxes[:, 1]) * (boxes[:, 2] - boxes[:, 0])
+        # convert everything into a torch.Tensor
         image_id = torch.tensor([image_idx])
+        boxes = torch.as_tensor(boxes, dtype=torch.float32)
+        gt_classes = torch.as_tensor(gt_classes, dtype=torch.int32)
+        iscrowd = torch.as_tensor(iscrowd, dtype=torch.int32)
 
-        target = {}
-        target["boxes"] = boxes
-        target["labels"] = gt_classes
-        target["image_id"] = image_id
-        target["area"] = area
-        target["iscrowd"] = iscrowd
+        area = (boxes[:, 3] - boxes[:, 1]) * (boxes[:, 2] - boxes[:, 0])
+
+        target = {"boxes": boxes, "labels": gt_classes, "image_id": image_id, "area": area, "iscrowd": iscrowd}
 
         if self._transforms is not None:
             image, target = self._transforms(image, target)

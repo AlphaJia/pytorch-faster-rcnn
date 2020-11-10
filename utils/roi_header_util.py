@@ -332,7 +332,7 @@ class RoIHeads(torch.nn.Module):
             for t in targets:
                 floating_point_types = (torch.float, torch.double, torch.half)
                 assert t["boxes"].dtype in floating_point_types, "target boxes must of float type"
-                assert t["labels"].dtype == torch.int64, "target labels must of int64 type"
+                # assert t["labels"].dtype == torch.int64, "target labels must of int64 type"
 
         if self.training:
             # 划分正负样本，统计对应gt的标签以及边界框回归信息

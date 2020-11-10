@@ -59,8 +59,9 @@ class AnchorsGenerator(nn.Module):
             assert cell_anchors is not None
 
         # generate anchor template
-        cell_anchors = [generate_anchors(sizes, aspect_ratios, dtype, device)
-                        for sizes, aspect_ratios in zip(self.sizes, self.aspect_ratios)]
+        cell_anchors = [generate_anchors(self.sizes, self.aspect_ratios, dtype, device)]
+        # cell_anchors = [generate_anchors(sizes, aspect_ratios, dtype, device)
+        #                 for sizes, aspect_ratios in zip(self.sizes, self.aspect_ratios)]
         self.cell_anchors = cell_anchors
 
     def num_anchors_per_location(self):
@@ -149,7 +150,7 @@ class AnchorsGenerator(nn.Module):
         # get anchor coordinate list in origin image, according to map
         anchors_over_all_feature_maps = self.cached_grid_anchors(feature_map_sizes, strides)
 
-        anchors = torch.jit.annotate(list[list[torch.Tensor]], [])
+        anchors = []
         # for every image and feature map in a batch
         for i, (_, _) in enumerate(image_list.image_sizes):
             anchors_in_image = []
