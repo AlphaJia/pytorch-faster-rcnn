@@ -7,7 +7,7 @@ from torchvision import transforms
 
 from config.test_config import test_cfg
 from dataloader.coco_dataset import coco
-from draw_box_utils import draw_box
+from utils.draw_box_utils import draw_box
 from utils.train_utils import create_model
 
 
