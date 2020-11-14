@@ -1,6 +1,7 @@
 import time
+import torch
 from utils.train_utils import MetricLogger
-from utils.coco_utils import *
+from utils.coco_utils import get_coco_api_from_dataset, CocoEvaluator
 
 
 @torch.no_grad()
@@ -36,7 +37,7 @@ def evaluate(model, data_loader, device, mAP_list=None):
         metric_logger.update(model_time=model_time, evaluator_time=evaluator_time)
 
     # gather the stats from all processes
-    # metric_logger.synchronize_between_processes()
+    metric_logger.synchronize_between_processes()
     print("Averaged stats:", metric_logger)
     coco_evaluator.synchronize_between_processes()
 
@@ -51,5 +52,5 @@ def evaluate(model, data_loader, device, mAP_list=None):
     if isinstance(mAP_list, list):
         mAP_list.append(voc_mAP)
 
-    return coco_evaluator
+    return coco_evaluator, voc_mAP
 

@@ -263,11 +263,6 @@ class Matcher(object):
     BELOW_LOW_THRESHOLD = -1
     BETWEEN_THRESHOLDS = -2
 
-    __annotations__ = {
-        'BELOW_LOW_THRESHOLD': int,
-        'BETWEEN_THRESHOLDS': int,
-    }
-
     def __init__(self, high_threshold, low_threshold, allow_low_quality_matches=False):
         """
         Args:

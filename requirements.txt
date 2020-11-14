@@ -3,3 +3,5 @@ torchvision~=0.6.1+cu101
 numpy~=1.15.4
 Pillow~=6.1.0
 pycocotools~=2.0
+matplotlib~=3.0.2
+tensorboardX~=2.0

@@ -1,6 +1,5 @@
-import torch
 from torch import nn
-from models.modules import BasicBlock, Bottleneck
+
 
 class Bottleneck(nn.Module):
     expansion = 4
@@ -70,6 +69,7 @@ class BasicBlock(nn.Module):
         out = self.relu(out)
 
         return out
+
 
 class StageModule(nn.Module):
     def __init__(self, stage, output_branches, c, bn_momentum):
@@ -209,7 +209,7 @@ class HRNet(nn.Module):
                 nn.Conv2d(c * (2 ** 2), c * (2 ** 3), kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False),
                 nn.BatchNorm2d(c * (2 ** 3), eps=1e-05, momentum=bn_momentum, affine=True, track_running_stats=True),
                 nn.ReLU(inplace=True),
-            )),  # ToDo Why the new branch derives from the "upper" branch only?
+            )),
         ])
 
         # Stage 4 (stage4)      - Fourth module with 3 groups of bottleneck (resnet) modules. This has 4 branches

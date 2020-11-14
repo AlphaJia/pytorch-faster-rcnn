@@ -1,8 +1,10 @@
-import torch
-from torch import nn, Tensor
 import math
+
+import torch
+from torch import nn
+from torch.jit.annotations import List, Tuple
+
 from utils.im_utils import ImageList
-from torch.jit.annotations import List, Tuple, Dict, Optional
 
 
 def torch_choice(l):
@@ -121,7 +123,7 @@ class GeneralizedRCNNTransform(nn.Module):
             return result
         for i, (pred, im_s, o_im_s) in enumerate(zip(result, image_shapes, original_image_sizes)):
             boxes = pred["boxes"]
-            boxes = resize_boxes(boxes, im_s, o_im_s)  # map bbox result to original image
+            boxes = resize_boxes(boxes, im_s, o_im_s)
             result[i]["boxes"] = boxes
         return result
 
@@ -168,8 +170,6 @@ def resize_boxes(boxes, original_size, new_size):
     ]
     ratios_height, ratios_width = ratios
 
-    # Removes a tensor dimension, boxes [minibatch, 4]
-    # Returns a tuple of all slices along a given dimension, already without it.
     xmin, ymin, xmax, ymax = boxes.unbind(1)
     xmin = xmin * ratios_width
     xmax = xmax * ratios_width

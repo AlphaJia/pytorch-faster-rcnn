@@ -40,7 +40,7 @@ class AnchorsGenerator(nn.Module):
     def __init__(self, sizes=(128, 256, 512), aspect_ratios=(0.5, 1.0, 2.0)):
         super(AnchorsGenerator, self).__init__()
 
-        assert len(sizes) == len(aspect_ratios), 'anchor sizes must equal to anchor ratios!'
+        # assert len(sizes) == len(aspect_ratios), 'anchor sizes must equal to anchor ratios!'
 
         self.sizes = sizes
         self.aspect_ratios = aspect_ratios
@@ -59,14 +59,13 @@ class AnchorsGenerator(nn.Module):
             assert cell_anchors is not None
 
         # generate anchor template
-        cell_anchors = [generate_anchors(self.sizes, self.aspect_ratios, dtype, device)]
-        # cell_anchors = [generate_anchors(sizes, aspect_ratios, dtype, device)
-        #                 for sizes, aspect_ratios in zip(self.sizes, self.aspect_ratios)]
+        cell_anchors = [generate_anchors(sizes, aspect_ratios, dtype, device)
+                        for sizes, aspect_ratios in zip(self.sizes, self.aspect_ratios)]
         self.cell_anchors = cell_anchors
 
     def num_anchors_per_location(self):
         # calculate the number of anchors per feature map, for k in origin paper
-        return [len(self.sizes) * len(self.aspect_ratios)]
+        return [len(s) * len(a) for s, a in zip(self.sizes, self.aspect_ratios)]
 
     def grid_anchors(self, feature_map_sizes, strides):
         """

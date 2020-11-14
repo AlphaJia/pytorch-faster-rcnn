@@ -1,8 +1,9 @@
-from torch.nn import functional as F
 from torch import nn
-from utils.det_utils import *
 from torch.jit.annotations import Dict
+from torch.nn import functional as F
+
 import utils.boxes_utils as box_op
+from utils.det_utils import *
 
 
 class RPNHead(nn.Module):
@@ -62,14 +63,6 @@ class RegionProposalNetwork(torch.nn.Module):
             on training or evaluation
      :param nms_thresh: NMS threshold used for postprocessing the RPN proposals
      """
-
-    __annotations__ = {
-        'box_coder': BoxCoder,
-        'proposal_matcher': Matcher,
-        'fg_bg_sampler': BalancedPositiveNegativeSampler,
-        'pre_nms_top_n': Dict[str, int],
-        'post_nms_top_n': Dict[str, int],
-    }
 
     def __init__(self, anchor_generator, head, fg_iou_thresh, bg_iou_thresh, batch_size_per_image, positive_fraction,
                  pre_nms_top_n, post_nms_top_n, nms_thresh):
@@ -256,7 +249,7 @@ class RegionProposalNetwork(torch.nn.Module):
                                   beta=1 / 9, size_average=False, ) / (sampled_inds.numel())
 
         # classification loss
-        objectness_loss = F.binary_cross_entropy_with_logits( objectness[sampled_inds], labels[sampled_inds])
+        objectness_loss = F.binary_cross_entropy_with_logits(objectness[sampled_inds], labels[sampled_inds])
 
         return objectness_loss, box_loss
 
@@ -309,6 +302,6 @@ class RegionProposalNetwork(torch.nn.Module):
             regression_targets = self.box_coder.encode(matched_gt_boxes, anchors)
             loss_objectness, loss_rpn_box_reg = self.compute_loss(
                 fg_bg_scores, pred_bbox_deltas, labels, regression_targets)
-            losses = {"loss_objectness": loss_objectness,  "loss_rpn_box_reg": loss_rpn_box_reg}
+            losses = {"loss_objectness": loss_objectness, "loss_rpn_box_reg": loss_rpn_box_reg}
 
         return boxes, losses

@@ -1,14 +1,16 @@
-import torch
-from torch import nn
-from collections import OrderedDict
-from utils.anchor_utils import AnchorsGenerator
-from utils.rpn_utils import RPNHead, RegionProposalNetwork
-from utils.roi_header_util import RoIHeads
-from torchvision.ops import MultiScaleRoIAlign
-from torch.jit.annotations import Tuple, List, Dict, Optional
-from torch import Tensor
-import torch.nn.functional as F
 import warnings
+from collections import OrderedDict
+
+import torch
+import torch.nn.functional as F
+from torch import Tensor
+from torch import nn
+from torch.jit.annotations import Tuple, List, Dict, Optional
+from torchvision.ops import MultiScaleRoIAlign
+
+from utils.anchor_utils import AnchorsGenerator
+from utils.roi_header_util import RoIHeads
+from utils.rpn_utils import RPNHead, RegionProposalNetwork
 from utils.transform_utils import GeneralizedRCNNTransform
 
 
@@ -31,19 +33,15 @@ class FasterRCNNBase(nn.Module):
         self.backbone = backbone
         self.rpn = rpn
         self.roi_heads = roi_heads
-        # used only on torchscript mode
-        self._has_warned = False
 
     @torch.jit.unused
     def eager_outputs(self, losses, detections):
-        # type: (Dict[str, Tensor], List[Dict[str, Tensor]]) -> Tuple[Dict[str, Tensor], List[Dict[str, Tensor]]]
         if self.training:
             return losses
 
         return detections
 
     def forward(self, images, targets=None):
-        # type: (List[Tensor], Optional[List[Dict[str, Tensor]]]) -> Tuple[Dict[str, Tensor], List[Dict[str, Tensor]]]
         """
         Arguments:
             images (list[Tensor]): images to be processed
@@ -61,7 +59,7 @@ class FasterRCNNBase(nn.Module):
 
         if self.training:
             assert targets is not None
-            for target in targets:  # 进一步判断传入的target的boxes参数是否符合规定
+            for target in targets:
                 boxes = target["boxes"]
                 if isinstance(boxes, torch.Tensor):
                     if len(boxes.shape) != 2 or boxes.shape[-1] != 4:
@@ -75,36 +73,26 @@ class FasterRCNNBase(nn.Module):
         original_image_sizes = torch.jit.annotate(List[Tuple[int, int]], [])
         for img in images:
             val = img.shape[-2:]
-            assert len(val) == 2  # 防止输入的是个一维向量
+            assert len(val) == 2
             original_image_sizes.append((val[0], val[1]))
-        # original_image_sizes = [img.shape[-2:] for img in images]
 
-        images, targets = self.transform(images, targets)  # 对图像进行预处理
-        # print(images.tensors.shape)
-        features = self.backbone(images.tensors)  # 将图像输入backbone得到特征图
-        if isinstance(features, torch.Tensor):  # 若只在一层特征层上预测，将feature放入有序字典中，并编号为‘0’
-            features = OrderedDict([('0', features)])  # 若在多层特征层上预测，传入的就是一个有序字典
+        images, targets = self.transform(images, targets)
 
-        # 将特征层以及标注target信息传入rpn中
+        features = self.backbone(images.tensors)
+        if isinstance(features, torch.Tensor):
+            features = OrderedDict([('0', features)])
+
         proposals, proposal_losses = self.rpn(images, features, targets)
 
-        # 将rpn生成的数据以及标注target信息传入fast rcnn后半部分
         detections, detector_losses = self.roi_heads(features, proposals, images.image_sizes, targets)
 
-        # 对网络的预测结果进行后处理（主要将bboxes还原到原图像尺度上）
         detections = self.transform.postprocess(detections, images.image_sizes, original_image_sizes)
 
         losses = {}
         losses.update(detector_losses)
         losses.update(proposal_losses)
 
-        if torch.jit.is_scripting():
-            if not self._has_warned:
-                warnings.warn("RCNN always returns a (Losses, Detections) tuple in scripting")
-                self._has_warned = True
-            return losses, detections
-        else:
-            return self.eager_outputs(losses, detections)
+        return self.eager_outputs(losses, detections)
 
 
 class TwoMLPHead(nn.Module):
@@ -115,7 +103,6 @@ class TwoMLPHead(nn.Module):
     """
 
     def __init__(self, in_channels, representation_size):
-
         super(TwoMLPHead, self).__init__()
 
         self.fc6 = nn.Linear(in_channels, representation_size)
@@ -229,7 +216,7 @@ class FasterRCNN(FasterRCNNBase):
 
     def __init__(self, backbone, num_classes=None,
                  # transform parameter
-                 min_size=800, max_size=1000,  # preprocess minimum and maximum size
+                 min_size=300, max_size=800,  # preprocess minimum and maximum size
                  image_mean=None, image_std=None,  # mean and std in preprocess
 
                  # RPN parameters
@@ -309,11 +296,6 @@ class FasterRCNN(FasterRCNNBase):
             box_batch_size_per_image, box_positive_fraction,
             bbox_reg_weights,
             box_score_thresh, box_nms_thresh, box_detections_per_img)
-
-        if image_mean is None:
-            image_mean = [0.485, 0.456, 0.406]
-        if image_std is None:
-            image_std = [0.229, 0.224, 0.225]
 
         transform = GeneralizedRCNNTransform(min_size, max_size, image_mean, image_std)
 

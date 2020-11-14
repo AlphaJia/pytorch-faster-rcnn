@@ -1,5 +1,5 @@
-import torch.nn as nn
 import torch
+import torch.nn as nn
 
 channels_cfgs = [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512, 'M', 512, 512, 512, 'M']
 
@@ -15,7 +15,7 @@ class VGG(nn.Module):
         self.features = features
         self.classifier = nn.Sequential(
             nn.Dropout(p=0.5),
-            nn.Linear(512*7*7, 2048),
+            nn.Linear(512 * 7 * 7, 2048),
             nn.ReLU(True),
             nn.Dropout(p=0.5),
             nn.Linear(2048, 2048),
@@ -59,5 +59,3 @@ def make_features(ch_cfgs):
             layers += [conv2d, nn.ReLU(True)]
             in_channels = v
     return nn.Sequential(*layers)
-
-

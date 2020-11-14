@@ -1,6 +1,7 @@
+import math
+
 import torch.nn as nn
 import torch.nn.functional as F
-import math
 
 
 class Bottleneck(nn.Module):

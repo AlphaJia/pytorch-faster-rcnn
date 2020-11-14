@@ -2,14 +2,14 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import os
 import json
-import torch
-import numpy as np
-from torch.utils.data import Dataset
-from PIL import Image
+import os
 
+import numpy as np
+import torch
+from PIL import Image
 from pycocotools.coco import COCO
+from torch.utils.data import Dataset
 
 
 class coco(Dataset):
@@ -38,11 +38,11 @@ class coco(Dataset):
                                                    self._COCO.getCatIds())))
 
         self.coco_cat_id_to_class_ind = dict([(self._class_to_coco_cat_id[cls],
-                                          self._class_to_ind[cls])
-                                         for cls in self._classes[1:]])
+                                               self._class_to_ind[cls])
+                                              for cls in self._classes[1:]])
 
     def __len__(self):
-        return len(self.anno)
+        return len(self.anno['images'])
 
     def _get_ann_file(self):
         prefix = 'instances' if self._image_set.find('test') == -1 else 'image_info'
@@ -78,7 +78,7 @@ class coco(Dataset):
             y1 = np.max((0, obj['bbox'][1]))
             x2 = np.min((width - 1, x1 + np.max((0, obj['bbox'][2] - 1))))
             y2 = np.min((height - 1, y1 + np.max((0, obj['bbox'][3] - 1))))
-            if obj['area'] > 0 and x2 >= x1 and y2 >= y1:
+            if obj['area'] > 0 and x2 > x1 and y2 > y1:
                 obj['clean_bbox'] = [x1, y1, x2, y2]
                 valid_objs.append(obj)
         objs = valid_objs
@@ -113,3 +113,6 @@ class coco(Dataset):
     def collate_fn(batch):
         return tuple(zip(*batch))
 
+    @property
+    def class_to_coco_cat_id(self):
+        return self._class_to_coco_cat_id
