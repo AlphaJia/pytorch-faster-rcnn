@@ -83,17 +83,17 @@ Modify backbone cfg item in config/train_config.py with mobilenet, download pret
 ```Shell
  python train.py
   ```
-* 4.2 Train with [resnet-fpn]((https://arxiv.org/abs/1409.1556))  
+* Train with [resnet-fpn]((https://arxiv.org/abs/1409.1556))  
 Modify backbone cfg item in config/train_config.py with resnet50_fpn, download pretrained weights [here](https://download.pytorch.org/models/fasterrcnn_resnet50_fpn_coco-258fb6c6.pth), and set backbone_pretrained_weights in config/train_config.py with downloaded path
 ```Shell
  python train.py
   ```
-* 4.3 Train with [vgg16]((https://arxiv.org/abs/1409.1556))  
+* Train with [vgg16]((https://arxiv.org/abs/1409.1556))  
 Modify backbone cfg item in config/train_config.py with vgg16
 ```Shell
  python train.py
   ```
-* 4.4 Train with [HRNet]((https://arxiv.org/abs/1409.1556))  
+* Train with [HRNet]((https://arxiv.org/abs/1409.1556))  
 Modify backbone cfg item in config/train_config.py with HRNe
 ```Shell
  python train.py
@@ -111,7 +111,7 @@ Some Key arguments:
 `--device_name`: training device   
 `--num_epochs`: training epochs   
 ##  5. Test  
-Modify model_weights cfg item in config/train_config.py with your trained weights path and gpu_id with your own cuda device ID.  
+Modify model_weights cfg item in config/test_config.py with your trained weights path and gpu_id with your own cuda device ID.  
 you may refer to config/test_config.py for more argument.  
 Some Key arguments:  
 `--model_weights`: training save path  
