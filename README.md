@@ -18,7 +18,7 @@
 
 # pytorch-faster-rcnn
 ##  1. Introduction  
-Pytorch based implementation of faster rcnn framework.For details about faster R-CNN please refer to the paper [Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks]((https://arxiv.org/abs/1506.01497)) by Shaoqing Ren, Kaiming He, Ross Girshick, Jian Sun
+Pytorch based implementation of faster rcnn framework.For details about faster R-CNN please refer to the paper [Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks](https://arxiv.org/abs/1506.01497) by Shaoqing Ren, Kaiming He, Ross Girshick, Jian Sun
 
 
 This detection framework has the following features:  
@@ -78,22 +78,22 @@ pip install -r requirements.txt
 
 ##  4. Train
 Modify model_save_dir cfg item in config/train_config.py with your own save path and device_name with your own device
-* Train with [mobilenet]((https://arxiv.org/abs/1801.04381))  
+* Train with [mobilenet](https://arxiv.org/abs/1801.04381)  
 Modify backbone cfg item in config/train_config.py with mobilenet, download pretrained weights [here](https://download.pytorch.org/models/mobilenet_v2-b0353104.pth), and set backbone_pretrained_weights in config/train_config.py with downloaded path.
 ```Shell
  python train.py
   ```
-* Train with [resnet-fpn]((https://arxiv.org/abs/1409.1556))  
+* Train with [resnet-fpn](https://arxiv.org/abs/1409.1556)  
 Modify backbone cfg item in config/train_config.py with resnet50_fpn, download pretrained weights [here](https://download.pytorch.org/models/fasterrcnn_resnet50_fpn_coco-258fb6c6.pth), and set backbone_pretrained_weights in config/train_config.py with downloaded path
 ```Shell
  python train.py
   ```
-* Train with [vgg16]((https://arxiv.org/abs/1409.1556))  
+* Train with [vgg16](https://arxiv.org/abs/1409.1556)  
 Modify backbone cfg item in config/train_config.py with vgg16
 ```Shell
  python train.py
   ```
-* Train with [HRNet]((https://arxiv.org/abs/1409.1556))  
+* Train with [HRNet](https://arxiv.org/abs/1409.1556)  
 Modify backbone cfg item in config/train_config.py with HRNe
 ```Shell
  python train.py
